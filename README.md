@@ -12,3 +12,8 @@
 ## تخصيص
 - أصوات خليجية: ضعي VOICE_FEMALE / VOICE_MALE في .env من Voice Library ثم أعيدي التشغيل.
 - تحديث المعلومات: عدّلي knowledge.md ثم أعيدي node create-agent.mjs
+
+## الأيقونة والباركود
+- icons/ : أيقونة التطبيق بكل المقاسات (icon-1024.png لـ Median.co و App Store / Google Play).
+- barcode.html : صفحة الباركود — تولّد رمز QR تلقائياً لرابط التطبيق في نفس المجلد على GitHub Pages،
+  أو لأي رابط عبر: barcode.html?url=https://your-link
