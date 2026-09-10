@@ -111,6 +111,7 @@ section h2::before{content:"";width:4px;height:16px;border-radius:2px;background
 .toast{position:fixed;top:14px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:10px 16px;border-radius:12px;
   font-size:13px;z-index:9;opacity:0;transition:.3s;pointer-events:none;max-width:90%;text-align:center}
 .toast.show{opacity:1}
+.app.single{background-size:100% 262px,auto}
 [dir=ltr] .msg.ai{border-start-start-radius:4px}
 </style>
 </head>
@@ -229,6 +230,9 @@ const LIC = [
 /* ---------- state ---------- */
 const cfg = window.RUKHSATI_CONFIG || {agents:{}};
 let lang = 'ar', who = 'mariam', conv = null, SDK = null;
+// وضع الوكيل الواحد: config.js فيه agent + persona
+const SINGLE = ('agent' in cfg);
+if (SINGLE) { who = cfg.persona === 'rashid' ? 'rashid' : 'mariam'; }
 const $ = id => document.getElementById(id);
 
 function render(){
@@ -268,7 +272,7 @@ async function loadSDK(){
 }
 
 async function start(){
-  const id = cfg.agents?.[who];
+  const id = SINGLE ? cfg.agent : cfg.agents?.[who];
   if(!id){ toast(T[lang].noAgent); return false; }
   setMode('connecting');
   try{ await navigator.mediaDevices.getUserMedia({audio:true}); }
@@ -278,7 +282,6 @@ async function start(){
     conv = await Conversation.startSession({
       agentId: id,
       connectionType: 'webrtc',
-      overrides: { agent: { language: lang } },
       onConnect: ()=>{ setMode('listening'); render(); },
       onDisconnect: ()=>{ conv=null; setMode(); render(); addMsg(T[lang].ended,'sys'); },
       onMessage: ({message, source})=> message && addMsg(message, source==='user'?'user':'ai'),
@@ -306,6 +309,7 @@ document.querySelectorAll('.agent').forEach(b=>b.onclick=()=>{
   if(conv) stop(); who=b.dataset.agent;
   document.querySelectorAll('.agent').forEach(x=>x.classList.toggle('on',x===b)); render();
 });
+if (SINGLE) { document.querySelector('.pick').style.display = 'none'; document.getElementById('app').classList.add('single'); }
 render();
 </script>
 </body>
