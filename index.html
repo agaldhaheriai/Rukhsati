@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0B3B36">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>رخصتي | Rukhsati</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230B3B36'/%3E%3Crect x='14' y='12' width='30' height='40' rx='4' fill='%23F4EBDD'/%3E%3Cpath d='M20 22h18M20 29h18M20 36h10' stroke='%230B3B36' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='44' cy='44' r='10' fill='%23C8A24A'/%3E%3Cpath d='M40 44l3 3 5-6' stroke='%230B3B36' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<script src="config.js"></script>
+<style>
+:root{
+  --ink:#0B3B36; --ink2:#12524A; --sand:#F4EBDD; --sand2:#EADCC4; --gold:#C8A24A; --gold2:#E3C77C;
+  --text:#1E2A28; --muted:#6B7A76; --card:#FFFDF8; --line:#E4D8C2; --red:#B3423A; --ok:#2E8B57;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--sand);color:var(--text);font-family:'Tajawal',system-ui,sans-serif}
+body{min-height:100dvh;display:flex;justify-content:center}
+.app{width:100%;max-width:480px;min-height:100dvh;display:flex;flex-direction:column;position:relative;
+  background:
+   radial-gradient(120% 60% at 50% -10%, #1C6B60 0%, var(--ink) 55%) top/100% 330px no-repeat, var(--sand)}
+/* Sadu-inspired band */
+.sadu{height:10px;background:
+  repeating-linear-gradient(90deg,var(--gold) 0 10px,transparent 10px 20px),
+  linear-gradient(var(--ink2),var(--ink2));opacity:.9}
+header{padding:calc(14px + env(safe-area-inset-top)) 18px 6px;display:flex;align-items:center;gap:12px;color:#fff}
+.logo{width:44px;height:44px;flex:none}
+.brand h1{margin:0;font-size:21px;font-weight:800;letter-spacing:.2px}
+.brand p{margin:0;font-size:12.5px;color:#CFE3DE}
+.lang{margin-inline-start:auto;display:flex;background:rgba(255,255,255,.12);border-radius:999px;padding:3px}
+.lang button{border:0;background:transparent;color:#fff;font:700 12px 'Tajawal',system-ui,sans-serif;padding:6px 11px;border-radius:999px;cursor:pointer}
+.lang button.on{background:var(--gold);color:var(--ink)}
+
+/* agent picker */
+.pick{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px 16px 0}
+.agent{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.18);border-radius:18px;padding:10px;
+  display:flex;align-items:center;gap:10px;color:#fff;cursor:pointer;text-align:start;font-family:inherit;transition:.2s}
+.agent svg{width:46px;height:46px;border-radius:50%;flex:none;background:var(--sand)}
+.agent b{display:block;font-size:15px}.agent small{font-size:11.5px;color:#CFE3DE}
+.agent.on{background:var(--sand);color:var(--ink);border-color:var(--gold);box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.agent.on small{color:var(--muted)}
+
+/* stage */
+.stage{display:flex;flex-direction:column;align-items:center;padding:18px 16px 6px}
+.orb{position:relative;width:168px;height:168px;display:grid;place-items:center}
+.orb .ring{position:absolute;inset:0;border-radius:50%;border:2px solid var(--gold2);opacity:0}
+.orb .face{width:138px;height:138px;border-radius:50%;background:var(--sand);border:4px solid var(--gold);
+  box-shadow:0 10px 30px rgba(0,0,0,.25);overflow:hidden;position:relative;z-index:1}
+.orb .face svg{width:100%;height:100%}
+.speaking .ring{animation:pulse 1.6s ease-out infinite}
+.speaking .ring:nth-child(2){animation-delay:.5s}.speaking .ring:nth-child(3){animation-delay:1s}
+.listening .ring:nth-child(1){opacity:.7;animation:breathe 2.2s ease-in-out infinite}
+@keyframes pulse{0%{transform:scale(.82);opacity:.9}100%{transform:scale(1.28);opacity:0}}
+@keyframes breathe{50%{transform:scale(1.08);opacity:.25}}
+.status{margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 14px;
+  font-size:13px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:7px;box-shadow:0 3px 10px rgba(11,59,54,.08)}
+.dot{width:8px;height:8px;border-radius:50%;background:#A9B6B2}
+.dot.live{background:var(--ok);box-shadow:0 0 0 4px rgba(46,139,87,.18)}
+.intro{font-size:13.5px;color:var(--muted);text-align:center;margin:10px 8px 0;line-height:1.7}
+
+.call{margin:14px auto 4px;display:flex;align-items:center;gap:10px;border:0;border-radius:999px;padding:14px 26px;
+  background:var(--ink);color:#fff;font:800 16px 'Tajawal',system-ui,sans-serif;cursor:pointer;box-shadow:0 8px 20px rgba(11,59,54,.3)}
+.call svg{width:22px;height:22px}
+.call.end{background:var(--red);box-shadow:0 8px 20px rgba(179,66,58,.3)}
+
+section{padding:14px 16px 0}
+section h2{font-size:15px;margin:0 0 9px;color:var(--ink);display:flex;align-items:center;gap:8px}
+section h2::before{content:"";width:4px;height:16px;border-radius:2px;background:var(--gold)}
+
+/* chips */
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;
+  padding:8px 13px;font:600 13px 'Tajawal',system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+.chip:active{background:var(--sand2)}
+
+/* licence cards */
+.lic{display:grid;grid-auto-flow:column;grid-auto-columns:62%;gap:10px;overflow-x:auto;padding-bottom:6px;scroll-snap-type:x mandatory;scrollbar-width:none}
+.lic::-webkit-scrollbar{display:none}
+.lc{scroll-snap-align:start;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;cursor:pointer;
+  border-top:4px solid var(--ink);text-align:start;font-family:inherit;color:inherit}
+.lc .ic{width:34px;height:34px;border-radius:10px;background:var(--sand);display:grid;place-items:center;margin-bottom:6px}
+.lc .ic svg{width:20px;height:20px;stroke:var(--ink);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.lc b{font-size:14.5px;display:block;color:var(--ink)}
+.lc p{margin:3px 0 8px;font-size:12px;color:var(--muted);line-height:1.55;min-height:38px}
+.lc .price{font-size:12px;font-weight:800;color:#7a5f1f;background:#F7EDD2;border-radius:8px;padding:3px 8px;display:inline-block}
+
+/* transcript */
+.chat{display:flex;flex-direction:column;gap:8px;padding-bottom:8px}
+.msg{max-width:84%;padding:9px 13px;border-radius:16px;font-size:14px;line-height:1.65;white-space:pre-wrap}
+.msg.ai{background:var(--card);border:1px solid var(--line);align-self:flex-start;border-start-start-radius:4px}
+.msg.user{background:var(--ink);color:#fff;align-self:flex-end;border-start-end-radius:4px}
+.msg.sys{align-self:center;background:transparent;color:var(--muted);font-size:12px;text-align:center}
+.empty{font-size:13px;color:var(--muted);text-align:center;padding:10px;border:1.5px dashed var(--line);border-radius:14px}
+
+/* composer */
+.composer{position:sticky;bottom:0;margin-top:auto;padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+  background:linear-gradient(transparent,var(--sand) 30%);display:flex;gap:8px}
+.composer input{flex:1;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:12px 16px;
+  font:500 14.5px 'Tajawal',system-ui,sans-serif;color:var(--text);outline:none}
+.composer input:focus{border-color:var(--gold)}
+.composer button{width:46px;height:46px;border-radius:50%;border:0;background:var(--gold);color:var(--ink);display:grid;place-items:center;cursor:pointer}
+.composer svg{width:20px;height:20px}
+.note{font-size:11px;color:var(--muted);text-align:center;padding:6px 20px 90px;line-height:1.6}
+.toast{position:fixed;top:14px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:10px 16px;border-radius:12px;
+  font-size:13px;z-index:9;opacity:0;transition:.3s;pointer-events:none;max-width:90%;text-align:center}
+.toast.show{opacity:1}
+[dir=ltr] .msg.ai{border-start-start-radius:4px}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header>
+    <svg class="logo" viewBox="0 0 64 64" aria-hidden="true">
+      <rect width="64" height="64" rx="16" fill="#F4EBDD"/>
+      <rect x="13" y="11" width="30" height="40" rx="4" fill="#fff" stroke="#0B3B36" stroke-width="2.5"/>
+      <path d="M19 21h18M19 28h18M19 35h10" stroke="#0B3B36" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="44" cy="44" r="11" fill="#C8A24A"/>
+      <path d="M39.5 44l3 3 6-6.5" stroke="#0B3B36" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div class="brand"><h1 data-t="title">رخصتي</h1><p data-t="tag">مستشارك الذكي لرخص أبوظبي الاقتصادية</p></div>
+    <div class="lang"><button id="lAr" class="on">ع</button><button id="lEn">EN</button></div>
+  </header>
+  <div class="pick">
+    <button class="agent on" data-agent="mariam" id="aM"><span id="avM"></span><span><b data-t="mName">مريم</b><small data-t="mRole">مستشارة الرخص</small></span></button>
+    <button class="agent" data-agent="rashid" id="aR"><span id="avR"></span><span><b data-t="rName">راشد</b><small data-t="rRole">مستشار الرخص</small></span></button>
+  </div>
+
+  <div class="stage">
+    <div class="orb" id="orb"><span class="ring"></span><span class="ring"></span><span class="ring"></span><div class="face" id="face"></div></div>
+    <div class="status"><span class="dot" id="dot"></span><span id="status" data-t="ready">جاهزة للمحادثة</span></div>
+    <p class="intro" id="intro"></p>
+    <button class="call" id="callBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+      <span id="callTxt" data-t="start">ابدأ المحادثة الصوتية</span>
+    </button>
+  </div>
+
+  <section><h2 data-t="quick">أسئلة سريعة</h2><div class="chips" id="chips"></div></section>
+  <section><h2 data-t="types">أنواع الرخص</h2><div class="lic" id="lic"></div></section>
+  <section><h2 data-t="conv">المحادثة</h2><div class="chat" id="chat"><div class="empty" id="empty" data-t="empty">اضغط زر المحادثة أو اكتب سؤالك بالأسفل</div></div></section>
+  <p class="note" data-t="note">المعلومات إرشادية وفق دائرة التنمية الاقتصادية وهيئة أبوظبي للتسجيل والترخيص (ADRA). الرسوم تقريبية — يُرجى التأكد عبر منصة تم أو 800555.</p>
+
+  <form class="composer" id="form">
+    <input id="inp" autocomplete="off" placeholder="اكتب سؤالك عن الرخص…">
+    <button type="submit" aria-label="send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l16-8-6 16-3-7z"/></svg></button>
+  </form>
+</div>
+<div class="toast" id="toast"></div>
+
+<script type="module">
+/* ---------- avatars (original SVG) ---------- */
+const woman = `<svg viewBox="0 0 120 120"><rect width="120" height="120" fill="#EADCC4"/>
+<circle cx="60" cy="60" r="56" fill="#F4EBDD"/>
+<path d="M14 124C18 94 40 84 60 84s42 10 46 40z" fill="#16181C"/>
+<path d="M60 16C34 16 27 38 27 57c0 18 7 31 17 39h32c10-8 17-21 17-39 0-19-7-41-33-41z" fill="#1B1D22"/>
+<ellipse cx="60" cy="60" rx="17.5" ry="21" fill="#E2AE88"/>
+<path d="M41 52c2-15 11-22 19-22s17 7 19 22c-5-8-12-11-19-11s-14 3-19 11z" fill="#1B1D22"/>
+<path d="M41 52c5-8 12-11 19-11s14 3 19 11" stroke="#C8A24A" stroke-width="1.6" fill="none"/>
+<ellipse cx="53" cy="60" rx="2.2" ry="2.6" fill="#2A1C14"/><ellipse cx="67" cy="60" rx="2.2" ry="2.6" fill="#2A1C14"/>
+<path d="M49.5 55.5q3.5-2 7 0M63.5 55.5q3.5-2 7 0" stroke="#2A1C14" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+<path d="M54 70q6 5 12 0" stroke="#A4584A" stroke-width="2" fill="none" stroke-linecap="round"/>
+<path d="M44 96l16 10 16-10" stroke="#C8A24A" stroke-width="2" fill="none"/></svg>`;
+const man = `<svg viewBox="0 0 120 120"><rect width="120" height="120" fill="#EADCC4"/>
+<circle cx="60" cy="60" r="56" fill="#F4EBDD"/>
+<path d="M14 124C18 94 40 84 60 84s42 10 46 40z" fill="#FFFFFF" stroke="#D9D4C8" stroke-width="1.5"/>
+<path d="M60 88v26" stroke="#D9D4C8" stroke-width="1.5"/><circle cx="60" cy="112" r="2.5" fill="#E6E0D2"/>
+<path d="M60 15C35 15 27 33 27 50l-5 52 19-6 2-38h34l2 38 19 6-5-52c0-17-8-35-33-35z" fill="#FCFCFA" stroke="#DCD6C9" stroke-width="1.5"/>
+<ellipse cx="60" cy="61" rx="17" ry="21" fill="#D9A07A"/>
+<path d="M43 64c0 14 8 22 17 22s17-8 17-22c-3 6-8 8-17 8s-14-2-17-8z" fill="#2B211B"/>
+<path d="M53 70q7-3 14 0" stroke="#2B211B" stroke-width="3" fill="none" stroke-linecap="round"/>
+<path d="M54 74q6 3 12 0" stroke="#9B5446" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+<path d="M40 50c3-12 11-17 20-17s17 5 20 17c-6-5-13-6-20-6s-14 1-20 6z" fill="#FCFCFA" stroke="#DCD6C9" stroke-width="1.2"/>
+<ellipse cx="60" cy="28" rx="23" ry="6.5" fill="none" stroke="#1E1E1E" stroke-width="3.6"/>
+<ellipse cx="60" cy="34" rx="25" ry="6.5" fill="none" stroke="#1E1E1E" stroke-width="3.6"/>
+<ellipse cx="53" cy="59" rx="2.2" ry="2.6" fill="#241812"/><ellipse cx="67" cy="59" rx="2.2" ry="2.6" fill="#241812"/>
+<path d="M49 54.5q4-2 8 0M63 54.5q4-2 8 0" stroke="#241812" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>`;
+document.getElementById('avM').innerHTML = woman;
+document.getElementById('avR').innerHTML = man;
+
+/* ---------- content ---------- */
+const T = {
+  ar:{title:"رخصتي",tag:"مستشارك الذكي لرخص أبوظبي الاقتصادية",mName:"مريم",mRole:"مستشارة الرخص",rName:"راشد",rRole:"مستشار الرخص",
+    ready:"جاهز للمحادثة",start:"ابدأ المحادثة الصوتية",end:"إنهاء المحادثة",quick:"أسئلة سريعة",types:"أنواع الرخص",conv:"المحادثة",
+    empty:"اضغط زر المحادثة أو اكتب سؤالك بالأسفل",ph:"اكتب سؤالك عن الرخص…",connecting:"جارٍ الاتصال…",listening:"أستمع إليك…",speaking:"يتحدث الآن…",
+    note:"المعلومات إرشادية وفق دائرة التنمية الاقتصادية وهيئة أبوظبي للتسجيل والترخيص (ADRA). الرسوم تقريبية — يُرجى التأكد عبر منصة تم أو 800555.",
+    introM:"أنا مريم، أشرح لك أنواع الرخص وشروطها ورسومها ومدتها، وأساعدك تختارين الأنسب لمشروعك.",
+    introR:"أنا راشد، أشرح لك أنواع الرخص وشروطها ورسومها ومدتها، وأساعدك تختار الأنسب لمشروعك.",
+    noAgent:"لم يتم ربط الوكيل بعد — شغّلي create-agent.mjs لتعبئة config.js",mic:"يرجى السماح باستخدام الميكروفون",ended:"انتهت المحادثة",
+    chips:["ما هي أنواع الرخص في أبوظبي؟","أبي رخصة بدون مكتب","كم رسوم رخصة تاجر أبوظبي؟","أنا مقيم خارج الدولة","مدة الرخصة والتجديد","رخصة مبدعة للمواطنات","هل يمكن للأجنبي التملك 100%؟"],
+    ask:n=>`اشرح لي ${n}: المميزات والشروط والرسوم والمدة`},
+  en:{title:"Rukhsati",tag:"Your AI advisor for Abu Dhabi economic licences",mName:"Mariam",mRole:"Licence advisor",rName:"Rashid",rRole:"Licence advisor",
+    ready:"Ready to chat",start:"Start voice chat",end:"End chat",quick:"Quick questions",types:"Licence types",conv:"Conversation",
+    empty:"Tap the call button or type your question below",ph:"Ask about licences…",connecting:"Connecting…",listening:"Listening…",speaking:"Speaking…",
+    note:"Guidance based on ADDED and the Abu Dhabi Registration and Licensing Authority (ADRA). Fees are indicative — confirm on TAMM or 800555.",
+    introM:"I'm Mariam. I explain licence types, conditions, fees and validity, and help you pick the right one.",
+    introR:"I'm Rashid. I explain licence types, conditions, fees and validity, and help you pick the right one.",
+    noAgent:"Agent not linked yet — run create-agent.mjs to fill config.js",mic:"Please allow microphone access",ended:"Conversation ended",
+    chips:["What licence types exist in Abu Dhabi?","I need a licence without an office","How much is the Tajer licence?","I live outside the UAE","Licence validity & renewal","Mobdea licence for Emirati women","Can foreigners own 100%?"],
+    ask:n=>`Explain the ${n}: features, conditions, fees and validity`}
+};
+const ICON = {
+  doc:'<path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/>',
+  store:'<path d="M3 9l2-5h14l2 5M4 9v11h16V9M3 9h18M9 20v-6h6v6"/>',
+  bolt:'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+  brush:'<path d="M18 3l3 3-9 9-3-3zM9 12c-3 0-5 2-5 5 0 2-1 3-2 3 4 1 9 0 9-5"/>',
+  lap:'<rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/>',
+  link:'<path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/>',
+  globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
+  leaf:'<path d="M5 19c0-9 6-14 15-14 0 9-5 15-14 15zM5 19l8-8"/>'
+};
+const LIC = [
+  {ic:'doc',ar:["الرخصة القياسية","أكثر من 1,100 نشاط وجميع الأشكال القانونية","من 1,200 درهم"],en:["Standard Licence","1,100+ activities, all legal forms","From AED 1,200"]},
+  {ic:'store',ar:["رخصة تاجر أبوظبي","بدون مكتب لأول 3 سنوات، بالهوية فقط","790 – 5,500 درهم"],en:["Tajer Abu Dhabi","No office for 3 years, Emirates ID only","AED 790 – 5,500"]},
+  {ic:'bolt',ar:["الرخصة الفورية","تصدر فوراً والمستندات خلال شهر","790 – 5,500 درهم"],en:["Instant Licence","Issued instantly, documents within 30 days","AED 790 – 5,500"]},
+  {ic:'brush',ar:["رخصة مبدعة","للمواطنات، من المنزل، أنشطة إبداعية","860 درهم (نشاطان)"],en:["Mobdea","Emirati women, home-based, creative","AED 860 (2 activities)"]},
+  {ic:'lap',ar:["رخصة العمل الحر","للمستقلين والموظفين، مع إقامة","من 1,200 درهم"],en:["Freelancer","Independents & employees, residency","From AED 1,200"]},
+  {ic:'link',ar:["الرخصة المزدوجة","لشركات المناطق الحرة في البر الرئيسي","من 1,200 درهم"],en:["Dual Licence","Free-zone firms on the mainland","From AED 1,200"]},
+  {ic:'globe',ar:["الرخصة الافتراضية","لغير المقيمين، بالجواز فقط","790 – 5,500 درهم"],en:["Virtual Licence","Non-residents, passport only","AED 790 – 5,500"]},
+  {ic:'leaf',ar:["رخصة المزارع","للمواطنين أصحاب المزارع، 70 نشاطاً","790 – 5,500 درهم"],en:["Farm Licence","Emirati farm owners, 70 activities","AED 790 – 5,500"]}
+];
+
+/* ---------- state ---------- */
+const cfg = window.RUKHSATI_CONFIG || {agents:{}};
+let lang = 'ar', who = 'mariam', conv = null, SDK = null;
+const $ = id => document.getElementById(id);
+
+function render(){
+  const t = T[lang];
+  document.documentElement.lang = lang; document.documentElement.dir = lang==='ar'?'rtl':'ltr';
+  document.querySelectorAll('[data-t]').forEach(el=>{ if(t[el.dataset.t]) el.textContent=t[el.dataset.t]; });
+  if(!conv) $('status').textContent = t.ready;
+  $('callTxt').textContent = conv ? t.end : t.start;
+  $('inp').placeholder = t.ph;
+  $('intro').textContent = who==='mariam'? t.introM : t.introR;
+  $('face').innerHTML = who==='mariam'? woman : man;
+  $('lAr').classList.toggle('on',lang==='ar'); $('lEn').classList.toggle('on',lang==='en');
+  $('chips').innerHTML = t.chips.map(c=>`<button class="chip">${c}</button>`).join('');
+  $('lic').innerHTML = LIC.map(l=>{const [n,d,p]=l[lang];return `<button class="lc" data-n="${n}"><div class="ic"><svg viewBox="0 0 24 24">${ICON[l.ic]}</svg></div><b>${n}</b><p>${d}</p><span class="price">${p}</span></button>`}).join('');
+  $('chips').querySelectorAll('.chip').forEach(b=>b.onclick=()=>ask(b.textContent));
+  $('lic').querySelectorAll('.lc').forEach(b=>b.onclick=()=>ask(t.ask(b.dataset.n)));
+}
+
+function toast(m){ const el=$('toast'); el.textContent=m; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),3200); }
+function addMsg(text, cls){
+  $('empty')?.remove();
+  const d=document.createElement('div'); d.className='msg '+cls; d.textContent=text; $('chat').appendChild(d);
+  d.scrollIntoView({behavior:'smooth',block:'end'});
+}
+function setMode(mode){
+  $('orb').className='orb '+(mode||'');
+  $('dot').classList.toggle('live',!!conv);
+  const t=T[lang];
+  $('status').textContent = mode==='speaking'? t.speaking : mode==='listening'? t.listening : mode==='connecting'? t.connecting : t.ready;
+}
+
+async function loadSDK(){
+  if(SDK) return SDK;
+  try{ SDK = await import('https://cdn.jsdelivr.net/npm/@elevenlabs/client/+esm'); }
+  catch{ SDK = await import('https://esm.sh/@elevenlabs/client'); }
+  return SDK;
+}
+
+async function start(){
+  const id = cfg.agents?.[who];
+  if(!id){ toast(T[lang].noAgent); return false; }
+  setMode('connecting');
+  try{ await navigator.mediaDevices.getUserMedia({audio:true}); }
+  catch{ toast(T[lang].mic); setMode(); return false; }
+  const { Conversation } = await loadSDK();
+  try{
+    conv = await Conversation.startSession({
+      agentId: id,
+      connectionType: 'webrtc',
+      overrides: { agent: { language: lang } },
+      onConnect: ()=>{ setMode('listening'); render(); },
+      onDisconnect: ()=>{ conv=null; setMode(); render(); addMsg(T[lang].ended,'sys'); },
+      onMessage: ({message, source})=> message && addMsg(message, source==='user'?'user':'ai'),
+      onModeChange: ({mode})=> setMode(mode),
+      onError: (e)=>{ console.error(e); toast(String(e?.message||e)); }
+    });
+    $('callBtn').classList.add('end'); render();
+    return true;
+  }catch(e){ console.error(e); conv=null; setMode(); toast(String(e?.message||e)); return false; }
+}
+async function stop(){ try{ await conv?.endSession(); }catch{} conv=null; $('callBtn').classList.remove('end'); setMode(); render(); }
+
+async function ask(text){
+  text = text.trim(); if(!text) return;
+  if(!conv){ const ok = await start(); if(!ok) return; await new Promise(r=>setTimeout(r,900)); }
+  addMsg(text,'user');
+  conv.sendUserMessage ? conv.sendUserMessage(text) : toast('SDK update required for text');
+}
+
+$('callBtn').onclick = ()=> conv ? stop() : start();
+$('form').onsubmit = e=>{ e.preventDefault(); const v=$('inp').value; $('inp').value=''; ask(v); };
+$('lAr').onclick = ()=>{ if(conv) stop(); lang='ar'; render(); };
+$('lEn').onclick = ()=>{ if(conv) stop(); lang='en'; render(); };
+document.querySelectorAll('.agent').forEach(b=>b.onclick=()=>{
+  if(conv) stop(); who=b.dataset.agent;
+  document.querySelectorAll('.agent').forEach(x=>x.classList.toggle('on',x===b)); render();
+});
+render();
+</script>
+</body>
+</html>
