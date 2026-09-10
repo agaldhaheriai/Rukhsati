@@ -1,10 +1,7 @@
-// ===== وكيل واحد (الأسهل) =====
-// الصقي Agent ID من لوحة ElevenLabs، واختاري الشخصية: "mariam" أو "rashid"
+// معرّفات وكلاء ElevenLabs
 window.RUKHSATI_CONFIG = {
-  agent: "",          // مثال: "agent_01abc..."
-  persona: "mariam"
+  agents: {
+    mariam: "agent_4601m257xt0neeqr8wd79tb7aqgx",  // Mariam Advisor
+    rashid: ""                                     // أضيفي معرّف راشد لاحقاً
+  }
 };
-
-// ===== (اختياري) وكيلان مع زر اختيار =====
-// احذفي السطور فوق واستخدمي هذا بدلاً منها:
-// window.RUKHSATI_CONFIG = { agents: { mariam: "agent_...", rashid: "agent_..." } };

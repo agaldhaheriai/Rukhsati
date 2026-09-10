@@ -12,7 +12,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
-<script src="config.js"></script>
+<script src="config.js?v=3"></script>
 <style>
 :root{
   --ink:#0B3B36; --ink2:#12524A; --sand:#F4EBDD; --sand2:#EADCC4; --gold:#C8A24A; --gold2:#E3C77C;
@@ -45,6 +45,9 @@ header{padding:calc(14px + env(safe-area-inset-top)) 18px 6px;display:flex;align
 .agent b{display:block;font-size:15px}.agent small{font-size:11.5px;color:#CFE3DE}
 .agent.on{background:var(--sand);color:var(--ink);border-color:var(--gold);box-shadow:0 6px 18px rgba(0,0,0,.18)}
 .agent.on small{color:var(--muted)}
+.agent.soon{opacity:.72;position:relative}
+.agent.soon::after{content:"قريباً";position:absolute;top:-8px;inset-inline-end:10px;background:var(--gold);color:var(--ink);font-size:10.5px;font-weight:800;padding:1px 9px;border-radius:999px}
+[dir=ltr] .agent.soon::after{content:"Soon"}
 
 /* stage */
 .stage{display:flex;flex-direction:column;align-items:center;padding:18px 16px 6px}
@@ -193,7 +196,7 @@ const T = {
     note:"المعلومات إرشادية وفق دائرة التنمية الاقتصادية وهيئة أبوظبي للتسجيل والترخيص (ADRA). الرسوم تقريبية — يُرجى التأكد عبر منصة تم أو 800555.",
     introM:"أنا مريم، أشرح لك أنواع الرخص وشروطها ورسومها ومدتها، وأساعدك تختارين الأنسب لمشروعك.",
     introR:"أنا راشد، أشرح لك أنواع الرخص وشروطها ورسومها ومدتها، وأساعدك تختار الأنسب لمشروعك.",
-    noAgent:"لم يتم ربط الوكيل بعد — شغّلي create-agent.mjs لتعبئة config.js",mic:"يرجى السماح باستخدام الميكروفون",ended:"انتهت المحادثة",
+    soon:"راشد قريباً — تحدّث الآن مع مريم",noAgent:"لم يتم ربط الوكيل بعد — شغّلي create-agent.mjs لتعبئة config.js",mic:"يرجى السماح باستخدام الميكروفون",ended:"انتهت المحادثة",
     chips:["ما هي أنواع الرخص في أبوظبي؟","أبي رخصة بدون مكتب","كم رسوم رخصة تاجر أبوظبي؟","أنا مقيم خارج الدولة","مدة الرخصة والتجديد","رخصة مبدعة للمواطنات","هل يمكن للأجنبي التملك 100%؟"],
     ask:n=>`اشرح لي ${n}: المميزات والشروط والرسوم والمدة`},
   en:{title:"Rukhsati",tag:"Your AI advisor for Abu Dhabi economic licences",mName:"Mariam",mRole:"Licence advisor",rName:"Rashid",rRole:"Licence advisor",
@@ -202,7 +205,7 @@ const T = {
     note:"Guidance based on ADDED and the Abu Dhabi Registration and Licensing Authority (ADRA). Fees are indicative — confirm on TAMM or 800555.",
     introM:"I'm Mariam. I explain licence types, conditions, fees and validity, and help you pick the right one.",
     introR:"I'm Rashid. I explain licence types, conditions, fees and validity, and help you pick the right one.",
-    noAgent:"Agent not linked yet — run create-agent.mjs to fill config.js",mic:"Please allow microphone access",ended:"Conversation ended",
+    soon:"Rashid is coming soon — talk to Mariam now",noAgent:"Agent not linked yet — run create-agent.mjs to fill config.js",mic:"Please allow microphone access",ended:"Conversation ended",
     chips:["What licence types exist in Abu Dhabi?","I need a licence without an office","How much is the Tajer licence?","I live outside the UAE","Licence validity & renewal","Mobdea licence for Emirati women","Can foreigners own 100%?"],
     ask:n=>`Explain the ${n}: features, conditions, fees and validity`}
 };
@@ -231,7 +234,10 @@ const LIC = [
 const cfg = window.RUKHSATI_CONFIG || {agents:{}};
 let lang = 'ar', who = 'mariam', conv = null, SDK = null;
 // وضع الوكيل الواحد: config.js فيه agent + persona
-const SINGLE = ('agent' in cfg);
+// معرّف مريم مضمّن احتياطياً — يشتغل حتى لو config.js قديم أو ناقص
+const DEFAULT_AGENTS = { mariam: "agent_4601m257xt0neeqr8wd79tb7aqgx", rashid: "" };
+const SINGLE = !!cfg.agent;
+const agentId = w => (SINGLE ? cfg.agent : (cfg.agents?.[w] || DEFAULT_AGENTS[w]));
 if (SINGLE) { who = cfg.persona === 'rashid' ? 'rashid' : 'mariam'; }
 const $ = id => document.getElementById(id);
 
@@ -272,7 +278,7 @@ async function loadSDK(){
 }
 
 async function start(){
-  const id = SINGLE ? cfg.agent : cfg.agents?.[who];
+  const id = agentId(who);
   if(!id){ toast(T[lang].noAgent); return false; }
   setMode('connecting');
   try{ await navigator.mediaDevices.getUserMedia({audio:true}); }
@@ -305,10 +311,13 @@ $('callBtn').onclick = ()=> conv ? stop() : start();
 $('form').onsubmit = e=>{ e.preventDefault(); const v=$('inp').value; $('inp').value=''; ask(v); };
 $('lAr').onclick = ()=>{ if(conv) stop(); lang='ar'; render(); };
 $('lEn').onclick = ()=>{ if(conv) stop(); lang='en'; render(); };
-document.querySelectorAll('.agent').forEach(b=>b.onclick=()=>{
+document.querySelectorAll('.agent').forEach(b=>{
+  if(!SINGLE && !agentId(b.dataset.agent)) b.classList.add('soon');
+  b.onclick=()=>{
+  if(b.classList.contains('soon')){ toast(T[lang].soon); return; }
   if(conv) stop(); who=b.dataset.agent;
   document.querySelectorAll('.agent').forEach(x=>x.classList.toggle('on',x===b)); render();
-});
+}});
 if (SINGLE) { document.querySelector('.pick').style.display = 'none'; document.getElementById('app').classList.add('single'); }
 render();
 </script>
