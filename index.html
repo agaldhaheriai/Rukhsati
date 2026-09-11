@@ -34,6 +34,8 @@ header{padding:calc(14px + env(safe-area-inset-top)) 18px 6px;display:flex;align
 .brand h1{margin:0;font-size:21px;font-weight:800;letter-spacing:.2px}
 .brand p{margin:0;font-size:12.5px;color:#CFE3DE}
 .qrbtn{margin-inline-start:auto;width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.12);color:#fff;display:grid;place-items:center;flex:none}
+.qrlink{display:inline-flex;align-items:center;gap:6px;margin-top:6px;color:var(--ink);font-weight:700;font-size:13.5px;text-decoration:none;border-bottom:1.5px dashed var(--gold);padding-bottom:2px}
+.qrlink svg{width:17px;height:17px}
 .qrbtn svg{width:21px;height:21px}
 .qrbtn:active{background:var(--gold);color:var(--ink)}
 .lang{display:flex;background:rgba(255,255,255,.12);border-radius:999px;padding:3px}
@@ -150,6 +152,7 @@ section h2::before{content:"";width:4px;height:16px;border-radius:2px;background
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
       <span id="callTxt" data-t="start">ابدأ المحادثة الصوتية</span>
     </button>
+  <a class="qrlink" href="barcode.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg><span data-t="qr">باركود التطبيق</span></a>
   </div>
 
   <section><h2 data-t="quick">أسئلة سريعة</h2><div class="chips" id="chips"></div></section>
@@ -197,7 +200,7 @@ document.getElementById('avR').innerHTML = man;
 /* ---------- content ---------- */
 const T = {
   ar:{title:"رخصتي",tag:"مستشارك الذكي لرخص أبوظبي الاقتصادية",mName:"مريم",mRole:"مستشارة الرخص",rName:"راشد",rRole:"مستشار الرخص",
-    ready:"جاهز للمحادثة",start:"ابدأ المحادثة الصوتية",end:"إنهاء المحادثة",quick:"أسئلة سريعة",types:"أنواع الرخص",conv:"المحادثة",
+    ready:"جاهز للمحادثة",start:"ابدأ المحادثة الصوتية",end:"إنهاء المحادثة",qr:"باركود التطبيق",quick:"أسئلة سريعة",types:"أنواع الرخص",conv:"المحادثة",
     empty:"اضغط زر المحادثة أو اكتب سؤالك بالأسفل",ph:"اكتب سؤالك عن الرخص…",connecting:"جارٍ الاتصال…",listening:"أستمع إليك…",speaking:"يتحدث الآن…",
     note:"المعلومات إرشادية وفق دائرة التنمية الاقتصادية وهيئة أبوظبي للتسجيل والترخيص (ADRA). الرسوم تقريبية — يُرجى التأكد عبر منصة تم أو 800555.",
     introM:"أنا مريم، أشرح لك أنواع الرخص وشروطها ورسومها ومدتها، وأساعدك تختارين الأنسب لمشروعك.",
@@ -206,7 +209,7 @@ const T = {
     chips:["ما هي أنواع الرخص في أبوظبي؟","أبي رخصة بدون مكتب","كم رسوم رخصة تاجر أبوظبي؟","أنا مقيم خارج الدولة","مدة الرخصة والتجديد","رخصة مبدعة للمواطنات","هل يمكن للأجنبي التملك 100%؟"],
     ask:n=>`اشرح لي ${n}: المميزات والشروط والرسوم والمدة`},
   en:{title:"Rukhsati",tag:"Your AI advisor for Abu Dhabi economic licences",mName:"Mariam",mRole:"Licence advisor",rName:"Rashid",rRole:"Licence advisor",
-    ready:"Ready to chat",start:"Start voice chat",end:"End chat",quick:"Quick questions",types:"Licence types",conv:"Conversation",
+    ready:"Ready to chat",start:"Start voice chat",end:"End chat",qr:"App QR code",quick:"Quick questions",types:"Licence types",conv:"Conversation",
     empty:"Tap the call button or type your question below",ph:"Ask about licences…",connecting:"Connecting…",listening:"Listening…",speaking:"Speaking…",
     note:"Guidance based on ADDED and the Abu Dhabi Registration and Licensing Authority (ADRA). Fees are indicative — confirm on TAMM or 800555.",
     introM:"I'm Mariam. I explain licence types, conditions, fees and validity, and help you pick the right one.",
@@ -263,7 +266,11 @@ function render(){
   $('lic').querySelectorAll('.lc').forEach(b=>b.onclick=()=>ask(t.ask(b.dataset.n)));
 }
 
-function toast(m){ const el=$('toast'); el.textContent=m; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),3200); }
+function explain(e){ const m=String(e?.message||e||'');
+  if(/quota_exceeded|credits/i.test(m)) return lang==='ar'?'انتهى رصيد ElevenLabs — أضيفي رصيداً أو رقّي الباقة من لوحة ElevenLabs':'ElevenLabs credits exhausted — add credits or upgrade your plan';
+  if(/auth|401|403/i.test(m)) return lang==='ar'?'الوكيل يتطلب مصادقة — ألغي Authentication من إعدادات الوكيل':'Agent requires authentication — disable it in agent security settings';
+  return (lang==='ar'?'تعذّر الاتصال: ':'Connection failed: ')+m; }
+function toast(m){ const el=$('toast'); el.textContent=m; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),6000); }
 function addMsg(text, cls){
   $('empty')?.remove();
   const d=document.createElement('div'); d.className='msg '+cls; d.textContent=text; $('chat').appendChild(d);
@@ -298,11 +305,11 @@ async function start(){
       onDisconnect: ()=>{ conv=null; setMode(); render(); addMsg(T[lang].ended,'sys'); },
       onMessage: ({message, source})=> message && addMsg(message, source==='user'?'user':'ai'),
       onModeChange: ({mode})=> setMode(mode),
-      onError: (e)=>{ console.error(e); toast(String(e?.message||e)); }
+      onError: (e)=>{ console.error(e); toast(explain(e)); addMsg(explain(e),'sys'); }
     });
     $('callBtn').classList.add('end'); render();
     return true;
-  }catch(e){ console.error(e); conv=null; setMode(); toast(String(e?.message||e)); return false; }
+  }catch(e){ console.error(e); conv=null; setMode(); toast(explain(e)); addMsg(explain(e),'sys'); return false; }
 }
 async function stop(){ try{ await conv?.endSession(); }catch{} conv=null; $('callBtn').classList.remove('end'); setMode(); render(); }
 
